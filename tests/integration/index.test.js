@@ -91,3 +91,135 @@ describe('Integration Tests - Package Exports', () => {
     });
   });
 });
+
+  describe('Real-World Workflow Integration', () => {
+    test('should perform complete property analysis workflow', () => {
+      // Simulate extracting data from a property listing
+      const listingText = `
+        Beautiful 8 bedroom multifamily property
+        Price: $1,250,000
+        NOI: $95,000 annually
+        Contact: agent@realty.com or (555) 123-4567
+      `;
+
+      
+      // Extract data
+      const prices = utilsPackage.extractPrice(listingText);
+      const emails = utilsPackage.extractEmail(listingText);
+      const phone = utilsPackage.extractPhoneNumber(listingText);
+      const bedrooms = utilsPackage.extractBedrooms(listingText);
+      
+      expect(prices).toContain(1250000);
+      expect(emails).toContain('agent@realty.com');
+      expect(phone).toBe('(555) 123-4567');
+      expect(bedrooms).toBe(8);
+      
+      // Perform calculations with extracted data
+      const propertyPrice = prices[0];
+      const annualNOI = 95000;
+      
+      const capRate = utilsPackage.calculateCapRate(annualNOI, propertyPrice);
+      const cocr15 = utilsPackage.calculateCOCR15(propertyPrice, annualNOI);
+      const cocr30 = utilsPackage.calculateCOCR30(propertyPrice, annualNOI);
+      const netToBuyer = utilsPackage.calculateNetToBuyer(propertyPrice, 0.25);
+      
+      // Verify calculations
+      expect(capRate).toBeCloseTo(0.076, 3); // 7.6% cap rate
+      expect(cocr15).toBeFinanciallyReasonable();
+      expect(cocr30).toBeFinanciallyReasonable();
+      expect(netToBuyer.netToBuyer).toBeGreaterThan(312500); // 25% down + costs
+      
+      // Format results for display
+      const formattedCapRate = utilsPackage.formatPercentage(capRate);
+      const formattedCOCR15 = utilsPackage.formatPercentage(cocr15);
+      const formattedNet = utilsPackage.formatCurrency(netToBuyer.netToBuyer);
+      
+      expect(formattedCapRate).toBeValidPercentage();
+      expect(formattedCOCR15).toBeValidPercentage();
+      expect(formattedNet).toBeValidCurrency();
+    });
+
+    test('should handle complete investment analysis chain', () => {
+      const propertyPrice = 2000000;
+      const grossRents = 240000; // $20K/month
+      const expenses = 0.40; // 40% expense ratio
+      const annualNOI = grossRents * (1 - expenses);
+      
+      // Calculate financing scenarios
+      const scenarios = [
+        { name: '15% Down', cocr: utilsPackage.calculateCOCR15(propertyPrice, annualNOI) },
+        { name: '30% Down', cocr: utilsPackage.calculateCOCR30(propertyPrice, annualNOI) },
+        { name: '50% Down', cocr: utilsPackage.calculateCOCRScenario(propertyPrice, annualNOI, 0.50) }
+      ];
+      
+      // Verify all scenarios are reasonable
+      scenarios.forEach(scenario => {
+        expect(scenario.cocr).toBeFinanciallyReasonable();
+      });
+      
+      // Higher down payment should generally yield higher COCR (less leverage but less debt service)
+      expect(scenarios[2].cocr).toBeGreaterThan(scenarios[0].cocr); // 50% > 15%
+      
+      // Calculate appreciation scenarios
+      const appreciation5yr = utilsPackage.calculateAppreciation(propertyPrice, 0.03, 5);
+      const appreciation10yr = utilsPackage.calculateAppreciation(propertyPrice, 0.03, 10);
+      
+      expect(appreciation10yr.futureValue).toBeGreaterThan(appreciation5yr.futureValue);
+      
+      // Calculate net to buyer for different down payments
+      const netToBuyer15 = utilsPackage.calculateNetToBuyer(propertyPrice, 0.15);
+      const netToBuyer30 = utilsPackage.calculateNetToBuyer(propertyPrice, 0.30);
+      
+      expect(netToBuyer30.netToBuyer).toBeGreaterThan(netToBuyer15.netToBuyer);
+    });
+
+    test('should validate and format extracted data correctly', () => {
+      const testData = {
+        phone: '(555) 123-4567',
+        email: 'test@example.com',
+        date: '2024-01-15',
+        price: 1500000,
+        percentage: 0.065
+      };
+      
+      // Validate extracted data
+      expect(utilsPackage.validatePhoneNumber(testData.phone)).toBe(true);
+      expect(utilsPackage.validateEmail(testData.email)).toBe(true);
+      expect(utilsPackage.validateDate(testData.date)).toBe(true);
+      
+      // Format for display
+      const formattedPrice = utilsPackage.formatCurrency(testData.price);
+      const formattedPercentage = utilsPackage.formatPercentage(testData.percentage);
+      const dom = utilsPackage.calculateDOM(testData.date);
+      
+      expect(formattedPrice).toBeValidCurrency();
+      expect(formattedPercentage).toBeValidPercentage();
+      expect(dom).toMatch(/01\/(14|15)\/2024/); // Accept either date due to timezone
+    });
+  });
+
+  describe('Performance and Reliability', () => {
+    test('should handle large datasets efficiently', () => {
+      const largeCashFlows = Array.from({ length: 100 }, (_, i) => 10000 + i * 1000);
+      
+      const startTime = Date.now();
+      const npv = utilsPackage.calculateNPV(largeCashFlows, 0.10, 500000);
+      const endTime = Date.now();
+      
+      expect(npv).toBeFinanciallyReasonable();
+      expect(endTime - startTime).toBeLessThan(100); // Should complete quickly
+    });
+
+    test('should maintain precision across multiple calculations', () => {
+      let runningTotal = 100000;
+      
+      // Perform multiple compound calculations
+      for (let i = 0; i < 10; i++) {
+        runningTotal = utilsPackage.calculateCompoundGrowth(runningTotal, 0.05, 1);
+      }
+      
+      // Should equal single 10-year calculation
+      const directCalculation = utilsPackage.calculateCompoundGrowth(100000, 0.05, 10);
+      expect(runningTotal).toBeCloseTo(directCalculation, 2);
+    });
+  });

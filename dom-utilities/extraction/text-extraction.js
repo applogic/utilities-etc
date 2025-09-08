@@ -9,6 +9,10 @@
  */
 function extractPhoneNumber(text = null) {
   const searchText = text || (typeof document !== 'undefined' ? document.body.innerText : '');
+
+  if (!searchText || typeof searchText !== 'string') {
+    return "Not found";
+  }
   
   // Check for tel: links first (only in browser environment)
   if (typeof document !== 'undefined') {
@@ -49,7 +53,7 @@ function extractBedrooms(text = null) {
   const searchText = text || (typeof document !== 'undefined' ? document.body.innerText : '');
   const defaultBedrooms = 10;
   
-  // Bedroom patterns
+  // Bedroom patterns - updated to handle 0 and negative validation
   const bedroomPatterns = [
     /(\d+)\s*bed(?:room)?s?\b/i,
     /beds?\s*:?\s*(\d+)/i,
@@ -60,8 +64,8 @@ function extractBedrooms(text = null) {
     const match = searchText.match(pattern);
     if (match) {
       const bedrooms = parseInt(match[1]);
-      // Sanity check - reasonable range for multifamily
-      if (bedrooms > 0 && bedrooms <= 100) {
+      // Accept 0 bedrooms as valid, reject negative, reasonable range check
+      if (bedrooms >= 0 && bedrooms <= 100) {
         return bedrooms;
       }
     }
@@ -93,10 +97,12 @@ function extractPrice(text = null) {
   const searchText = text || (typeof document !== 'undefined' ? document.body.innerText : '');
   
   // Price patterns - looking for currency symbols followed by numbers
+  // Price patterns - add pattern for "dollars" format
   const pricePatterns = [
     /\$\s*(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)/g,  // $1,000,000.00
     /\$\s*(\d+(?:\.\d+)?)\s*([KMB])/gi,        // $1.5M, $500K, $2B
-    /(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)\s*(?:dollars?|usd)/gi  // 1,000,000 dollars
+    /(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)\s*(?:dollars?|usd)/gi,  // 1,000,000 dollars
+    /(\d{7,})\s*(?:dollars?|usd)/gi            // 2500000 dollars (no commas)
   ];
   
   const prices = [];

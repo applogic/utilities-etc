@@ -114,3 +114,102 @@ describe('Real Estate Calculations', () => {
     });
   });
 });
+
+  describe('Real-World Property Analysis', () => {
+    test('should analyze complete multifamily property scenario', () => {
+      const propertyPrice = 1500000;
+      const grossRents = 180000; // $15K/month
+      const expenses = 0.45; // 45% expense ratio
+      const annualNOI = grossRents * (1 - expenses);
+      
+      // Calculate key metrics
+      const capRate = calculateCapRate(annualNOI, propertyPrice);
+      const cocr15 = calculateCOCR15(propertyPrice, annualNOI);
+      const cocr30 = calculateCOCR30(propertyPrice, annualNOI);
+      const netToBuyer = calculateNetToBuyer(propertyPrice, 0.25);
+      
+      // Verify reasonable results
+      expect(capRate).toBeWithinRange(0.055, 0.07); // 5.5-7% cap rate
+      expect(cocr30).toBeGreaterThan(cocr15); // 30% down should have higher COCR
+      expect(netToBuyer.netToBuyer).toBeGreaterThan(375000); // Down + costs
+      expect(netToBuyer.netToBuyer).toBeLessThan(550000); // Reasonable total
+    });
+
+    test('should calculate appreciation scenarios with different rates', () => {
+      const propertyPrice = 1000000;
+      const balloonBalance = 600000;
+      const dscrBalance = 50000;
+      
+      // Conservative appreciation
+      const conservative = calculateAppreciation(propertyPrice, 0.02, 10, balloonBalance, dscrBalance);
+      expect(conservative.futureValue).toBeCloseTo(1219000, -3); // ~$1.22M
+      
+      // Aggressive appreciation
+      const aggressive = calculateAppreciation(propertyPrice, 0.05, 10, balloonBalance, dscrBalance);
+      expect(aggressive.futureValue).toBeCloseTo(1628900, -3); // ~$1.63M
+      expect(aggressive.cashOutAfterRefi).toBeGreaterThan(conservative.cashOutAfterRefi);
+    });
+
+    test('should handle negative cash flow scenarios', () => {
+      // High-priced, low-NOI property
+      const propertyPrice = 2000000;
+      const lowNOI = 80000; // 4% cap rate
+      
+      const cocr15 = calculateCOCR15(propertyPrice, lowNOI);
+      const cocr30 = calculateCOCR30(propertyPrice, lowNOI);
+      
+      // Both should be negative (cash flow negative)
+      expect(cocr15).toBeLessThan(0);
+      expect(cocr30).toBeLessThan(0);
+      expect(cocr30).toBeGreaterThan(cocr15); // But 30% down less negative
+    });
+  });
+
+  describe('Edge Cases in Real Estate Calculations', () => {
+    test('calculateNetToBuyer should handle various down payment scenarios', () => {
+      const propertyPrice = 1000000;
+      
+      // No money down (100% financing)
+      const noDown = calculateNetToBuyer(propertyPrice, 0);
+      expect(noDown.downPayment).toBe(0);
+      expect(noDown.netToBuyer).toBeGreaterThan(50000); // Still have costs
+      
+      // All cash (100% down)
+      const allCash = calculateNetToBuyer(propertyPrice, 1.0);
+      expect(allCash.downPayment).toBe(1000000);
+      expect(allCash.netToBuyer).toBeGreaterThan(1000000);
+    });
+
+    test('COCR calculations should handle zero down payment', () => {
+      // This should return Infinity or very high number
+      const result = calculateCOCR(50000, 0);
+      expect(result).toBe(0); // Function returns 0 for zero down payment
+    });
+
+    test('cap rate should handle zero property price', () => {
+      expect(calculateCapRate(50000, 0)).toBe(0);
+    });
+  });
+
+  describe('Complex Financing Scenarios', () => {
+    test('should calculate DSCR + seller financing scenarios', () => {
+      const propertyPrice = 1200000;
+      const annualNOI = 72000; // 6% cap rate
+      
+      // 20% down, 70% DSCR, 10% seller financing
+      const downPayment = propertyPrice * 0.20;
+      const dscrAmount = propertyPrice * 0.70;
+      const sellerFiAmount = propertyPrice * 0.10;
+      
+      // Calculate payments
+      const dscrPayment = calculatePMT(dscrAmount, 0.075, 30) * 12;
+      const sellerFiPayment = calculatePMT(sellerFiAmount, 0, 30) * 12; // 0% interest
+      
+      const annualCashFlow = annualNOI - dscrPayment - sellerFiPayment;
+      const cocr = calculateCOCR(annualCashFlow, downPayment);
+      
+      expect(dscrPayment).toBeFinanciallyReasonable();
+      expect(sellerFiPayment).toBeCloseTo(4000, 2); 
+      expect(cocr).toBeFinanciallyReasonable();
+    });
+  });

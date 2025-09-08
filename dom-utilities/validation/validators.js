@@ -50,7 +50,24 @@ function validateDate(dateString) {
   }
   
   const date = new Date(dateString);
-  return !isNaN(date.getTime());
+  
+  // Check if it's a valid date
+  if (isNaN(date.getTime())) {
+    return false;
+  }
+  
+  // Additional check: make sure the parsed date matches what was intended
+  // This catches cases like '2024-02-30' which gets auto-corrected to March 1st
+  const iso = date.toISOString().slice(0, 10); // Get YYYY-MM-DD format
+  
+  // For ISO format dates, check if they match
+  if (dateString.match(/^\d{4}-\d{2}-\d{2}$/)) {
+    return iso === dateString;
+  }
+  
+  // For other formats, just check that it's a valid date object
+  // (This is less strict but handles various formats)
+  return true;
 }
 
 module.exports = {

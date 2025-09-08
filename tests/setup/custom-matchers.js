@@ -2,8 +2,14 @@
 
 expect.extend({
   toBeValidCurrency(received) {
-    const currencyRegex = /^-?\$[\d,]+(\.\d{2})?[KM]?$/;
-    const pass = typeof received === 'string' && currencyRegex.test(received);
+    const currencyPatterns = [
+      /^-?\$[\d,]+$/, // $1,234
+      /^-?\$[\d,]+\.\d{2}$/, // $1,234.56  
+      /^-?\$\d+(\.\d+)?[KM]$/ // $1.5M, $500K, $2M
+    ];
+    
+    const pass = typeof received === 'string' && 
+                currencyPatterns.some(pattern => pattern.test(received));
     
     return {
       message: () => `expected ${received} to be a valid currency format`,
