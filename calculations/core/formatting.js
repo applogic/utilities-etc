@@ -80,7 +80,7 @@ function formatPriceValue(price) {
   }
 }
 
-module.exports = {
+export {
   formatCurrency,
   formatNumber,
   formatPercentage,

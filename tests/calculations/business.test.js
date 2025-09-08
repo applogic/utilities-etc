@@ -1,11 +1,11 @@
-const {
+import {
   calculateCompoundGrowth,
   calculateNPV,
   calculatePresentValue,
   calculateCurrentRatio,
   calculateROE,
   calculateROI
-} = require('../../index');
+} from '../../index.js'
 
 describe('Business Calculations', () => {
   describe('Projections', () => {

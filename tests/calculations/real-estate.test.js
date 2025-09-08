@@ -1,4 +1,4 @@
-const {
+import {
   calculateAppreciation,
   calculateCapRate,
   calculateCashFlow,
@@ -9,7 +9,7 @@ const {
   calculateCOCRScenario,
   calculateNetToBuyer,
   calculatePMT
-} = require('../../index');
+} from '../../index.js';
 
 describe('Real Estate Calculations', () => {
   describe('Cash Flow Calculations', () => {

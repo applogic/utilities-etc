@@ -39,7 +39,7 @@ function calculateNPV(cashFlows, discountRate, initialInvestment = 0) {
   return npv - initialInvestment;
 }
 
-module.exports = {
+export {
   calculateCompoundGrowth,
   calculatePresentValue,
   calculateNPV

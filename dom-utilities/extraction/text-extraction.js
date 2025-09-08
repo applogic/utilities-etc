@@ -129,7 +129,7 @@ function extractPrice(text = null) {
   return prices;
 }
 
-module.exports = {
+export {
   extractPhoneNumber,
   extractBedrooms,
   extractEmail,

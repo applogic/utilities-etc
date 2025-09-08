@@ -1,4 +1,4 @@
-const { calculatePMT } = require('../core/loan-calculations');
+import { calculatePMT } from '../core/loan-calculations.js';
 
 /**
  * Calculate monthly cash flow
@@ -35,7 +35,7 @@ function calculateCapRate(annualNOI, propertyPrice) {
   return annualNOI / propertyPrice;
 }
 
-module.exports = {
+export {
   calculateCashFlow,
   calculateCashFlowYield,
   calculateCapRate

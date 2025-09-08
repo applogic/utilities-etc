@@ -1,9 +1,9 @@
-const {
+import {
   extractPhoneNumber,
   extractBedrooms,
   extractEmail,
   extractPrice
-} = require('../../index');
+} from '../../index.js';
 
 describe('DOM Utilities - Text Extraction', () => {
   describe('extractPhoneNumber', () => {

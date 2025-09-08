@@ -48,6 +48,6 @@ function calculateNetToBuyer(propertyPrice, downPaymentPercent, constants = {}) 
   };
 }
 
-module.exports = {
+export {
   calculateNetToBuyer
 };

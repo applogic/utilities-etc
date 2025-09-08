@@ -1,8 +1,8 @@
-const {
+import {
   validatePhoneNumber,
   validateEmail,
   validateDate
-} = require('../../index');
+} from '../../index.js';
 
 describe('DOM Utilities - Validation', () => {
   describe('validatePhoneNumber', () => {

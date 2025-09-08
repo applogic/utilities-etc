@@ -3,30 +3,30 @@
  */
 
 // Business utilities
-const { calculateCompoundGrowth, calculateNPV, calculatePresentValue } = require("./calculations/business/projections");
-const { calculateCurrentRatio, calculateROE, calculateROI } = require("./calculations/business/ratios");
+import { calculateCompoundGrowth, calculateNPV, calculatePresentValue } from "./calculations/business/projections.js";
+import { calculateCurrentRatio, calculateROE, calculateROI } from "./calculations/business/ratios.js";
 
 // Core calculation utilities
-const { formatCurrency, formatNumber, formatPercentage, formatPriceValue } = require("./calculations/core/formatting");
-const { calculateInterestOverTime, calculatePMT, calculateRemainingBalance } = require("./calculations/core/loan-calculations");
+import { formatCurrency, formatNumber, formatPercentage, formatPriceValue } from "./calculations/core/formatting.js";
+import { calculateInterestOverTime, calculatePMT, calculateRemainingBalance } from "./calculations/core/loan-calculations.js";
 
 // Date utilities
-const { calculateDOM, calculateTimeDifference } = require("./calculations/date/calculations");
+import { calculateDOM, calculateTimeDifference } from "./calculations/date/calculations.js";
 
 // Real estate utilities
-const { calculateAppreciation } = require("./calculations/real-estate/appreciation");
-const { calculateCapRate, calculateCashFlow, calculateCashFlowYield } = require("./calculations/real-estate/cash-flow");
-const { calculateNetToBuyer } = require("./calculations/real-estate/costs");
-const { calculateCOCR, calculateCOCR15, calculateCOCR30, calculateCOCRScenario } = require("./calculations/real-estate/returns");
+import { calculateAppreciation } from "./calculations/real-estate/appreciation.js";
+import { calculateCapRate, calculateCashFlow, calculateCashFlowYield } from "./calculations/real-estate/cash-flow.js";
+import { calculateNetToBuyer } from "./calculations/real-estate/costs.js";
+import { calculateCOCR, calculateCOCR15, calculateCOCR30, calculateCOCRScenario } from "./calculations/real-estate/returns.js";
 
 // DOM utilities
-const { extractBedrooms, extractEmail, extractPhoneNumber, extractPrice } = require("./dom-utilities/extraction/text-extraction");
-const { validateDate, validateEmail, validatePhoneNumber } = require("./dom-utilities/validation/validators");
+import { extractBedrooms, extractEmail, extractPhoneNumber, extractPrice } from "./dom-utilities/extraction/text-extraction.js";
+import { validateDate, validateEmail, validatePhoneNumber } from "./dom-utilities/validation/validators.js";
 
 // Export everything
-module.exports = {
+export {
   calculateAppreciation,
-  calculateBalloonBalance: calculateRemainingBalance, // Alias for common usage
+  calculateRemainingBalance as calculateBalloonBalance, // Alias for common usage
   calculateCapRate,
   calculateCashFlow,
   calculateCashFlowYield,

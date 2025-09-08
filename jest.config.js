@@ -1,11 +1,15 @@
-module.exports = {
+export default {
   testEnvironment: "jsdom",
   setupFilesAfterEnv: ["<rootDir>/tests/setup/test-helpers.js"],
+  transform: {
+    "^.+\\.js$": "babel-jest"
+  },
   collectCoverageFrom: [
     "**/*.js",
     "!**/node_modules/**",
     "!**/tests/**",
     "!jest.config.js",
+    "!babel.config.cjs",
     "!eslint.config.js"
   ],
   coverageDirectory: "coverage",

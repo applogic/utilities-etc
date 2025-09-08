@@ -35,7 +35,7 @@ function calculateCurrentRatio(currentAssets, currentLiabilities) {
   return currentAssets / currentLiabilities;
 }
 
-module.exports = {
+export {
   calculateROI,
   calculateROE,
   calculateCurrentRatio

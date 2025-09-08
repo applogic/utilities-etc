@@ -1,4 +1,4 @@
-const {
+import {
   calculatePMT,
   calculateRemainingBalance,
   calculateInterestOverTime,
@@ -6,7 +6,7 @@ const {
   formatNumber,
   formatPercentage,
   formatPriceValue
-} = require('../../index');
+} from '../../index.js';
 
 describe('Core Calculations', () => {
   describe('Loan Calculations', () => {

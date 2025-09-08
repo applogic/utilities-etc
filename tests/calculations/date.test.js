@@ -1,7 +1,7 @@
-const {
+import {
   calculateDOM,
   calculateTimeDifference
-} = require('../../index');
+} from '../../index.js';
 
 describe('Date Calculations', () => {
   beforeEach(() => {

@@ -61,7 +61,7 @@ function calculateInterestOverTime(principal, annualRate, years) {
   return totalPaid - principal;
 }
 
-module.exports = {
+export {
   calculatePMT,
   calculateRemainingBalance,
   calculateInterestOverTime

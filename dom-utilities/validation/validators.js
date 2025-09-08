@@ -70,7 +70,7 @@ function validateDate(dateString) {
   return true;
 }
 
-module.exports = {
+export {
   validatePhoneNumber,
   validateEmail,
   validateDate

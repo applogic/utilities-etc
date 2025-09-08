@@ -1,4 +1,4 @@
-const utilsPackage = require('../../index');
+import * as utilsPackage from '../../index.js';
 
 describe('Integration Tests - Package Exports', () => {
   describe('All Functions Available', () => {

@@ -1,4 +1,4 @@
-const { calculatePMT } = require('../core/loan-calculations');
+import { calculatePMT } from '../core/loan-calculations.js';
 
 /**
  * Calculate Cash-on-Cash Return
@@ -54,7 +54,7 @@ function calculateCOCR30(propertyPrice, annualNOI, interestRate = 0.075, amortiz
   return calculateCOCRScenario(propertyPrice, annualNOI, 0.30, interestRate, amortizationYears);
 }
 
-module.exports = {
+export {
   calculateCOCR,
   calculateCOCRScenario,
   calculateCOCR15,

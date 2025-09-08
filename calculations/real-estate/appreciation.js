@@ -22,6 +22,6 @@ function calculateAppreciation(currentPrice, appreciationRate, years, balloonBal
   };
 }
 
-module.exports = {
+export {
   calculateAppreciation
 };

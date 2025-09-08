@@ -98,7 +98,7 @@ function calculateTimeDifference(startDate, endDate = new Date()) {
   }
 }
 
-module.exports = {
+export {
   calculateDOM,
   calculateTimeDifference
 };
