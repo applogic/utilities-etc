@@ -1,0 +1,36 @@
+{
+  "name": "@archerjessop/utilities-etc",
+  "version": "1.0.0",
+  "description": "Comprehensive set of DOM manipulation, data extraction utilities, and various calculations (financial and otherwise) for our web applications",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint .",
+    "prepublishOnly": "npm test",
+    "release:patch": "npm version patch && git push && git push --tags && npm publish --access public",
+    "release:minor": "npm version minor && git push && git push --tags && npm publish --access public",
+    "release:major": "npm version major && git push && git push --tags && npm publish --access public"
+  },
+  "author": "Archer Jessop",
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "^29.5.0",
+    "jest-environment-jsdom": "^29.5.0",
+    "eslint": "^8.40.0"
+  },
+  "files": [
+    "calculations/**/*",
+    "calculations/**/*",
+    "dom-utilities/**/*",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/archerjessop/dom-utilities.git"
+  }
+}
