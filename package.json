@@ -10,6 +10,14 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
+    "test:verbose": "jest --verbose",
+    "test:business": "jest tests/calculations/business.test.js",
+    "test:core": "jest tests/calculations/core.test.js",
+    "test:date": "jest tests/calculations/date.test.js",
+    "test:real-estate": "jest tests/calculations/real-estate.test.js",
+    "test:dom": "jest tests/dom-utilities/",
+    "test:integration": "jest tests/integration/",
+    "test:run": "node tests/run-tests.js",
     "lint": "eslint .",
     "prepublishOnly": "npm test",
     "release:patch": "npm version patch && git push && git push --tags && npm publish --access public",
@@ -25,12 +33,12 @@
   },
   "files": [
     "calculations/**/*",
-    "calculations/**/*",
     "dom-utilities/**/*",
+    "index.js",
     "README.md"
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/archerjessop/dom-utilities.git"
+    "url": "git+https://gitlab.com/archerjessop/dom-utilities.git"
   }
 }
