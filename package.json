@@ -1,6 +1,6 @@
 {
   "name": "@archerjessop/utilities-etc",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "type": "module",
   "description": "Comprehensive set of DOM manipulation, data extraction utilities, and various calculations (financial and otherwise) for our web applications",
   "publishConfig": {
