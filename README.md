@@ -65,6 +65,23 @@ const isValid = validatePhoneNumber('(555) 123-4567');
 console.log(isValid); // true
 ```
 
+## API Reference
+
+### Date Utilities
+- `calculateDOM(dateString)` - Calculate days on market from listing date
+- `calculateTimeDifference(startDate, endDate)` - Calculate time difference between dates
+
+### Extraction Utilities  
+- `extractPhoneNumber(text)` - Extract phone numbers from text or DOM
+- `extractBedrooms(text)` - Extract bedroom count from text
+- `extractEmail(text)` - Extract email addresses from text
+- `extractPrice(text)` - Extract price values from text
+
+### Validation Utilities
+- `validatePhoneNumber(phone)` - Validate phone number format
+- `validateEmail(email)` - Validate email format  
+- `validateDate(dateString)` - Validate date string
+
 ## Browser Support
 
 Works in both Node.js and browser environments. In browser environments, functions can extract data directly from the DOM when no text parameter is provided.
