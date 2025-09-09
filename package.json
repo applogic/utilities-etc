@@ -37,6 +37,7 @@
   },
   "files": [
     "calculations/**/*",
+    "config/**/*",
     "dom-utilities/**/*",
     "index.js",
     "README.md"
