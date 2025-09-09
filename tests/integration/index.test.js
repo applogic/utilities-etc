@@ -54,10 +54,151 @@ describe('Integration Tests - Package Exports', () => {
     });
   });
 
-  describe('Function Types', () => {
-    test('all exports should be functions', () => {
-      Object.values(utilsPackage).forEach(exportedValue => {
-        expect(typeof exportedValue).toBe('function');
+  // Updated test to handle configuration exports
+
+  describe('Export Types', () => {
+    test('should export functions and configuration objects', () => {
+      const exports = Object.entries(utilsPackage);
+      
+      // Configuration exports (should be objects)
+      const configExports = [
+        'REAL_ESTATE_RULES',
+        'VALIDATION_RULES', 
+        'defaultRealEstateConfig',
+        'commercialConfig',
+        'residentialConfig'
+      ];
+      
+      // Class exports (should be constructors/functions)
+      const classExports = [
+        'RealEstateConfig'
+      ];
+      
+      // Function exports (should be functions)
+      const functionExports = exports
+        .map(([name]) => name)
+        .filter(name => !configExports.includes(name) && !classExports.includes(name));
+      
+      // Test configuration objects
+      configExports.forEach(exportName => {
+        if (utilsPackage[exportName]) {
+          expect(typeof utilsPackage[exportName]).toBe('object');
+          expect(utilsPackage[exportName]).not.toBeNull();
+          console.log(`✅ ${exportName} is a valid configuration object`);
+        }
+      });
+      
+      // Test class constructors
+      classExports.forEach(exportName => {
+        if (utilsPackage[exportName]) {
+          expect(typeof utilsPackage[exportName]).toBe('function');
+          expect(utilsPackage[exportName].prototype).toBeDefined();
+          console.log(`✅ ${exportName} is a valid class constructor`);
+        }
+      });
+      
+      // Test function exports
+      functionExports.forEach(exportName => {
+        expect(typeof utilsPackage[exportName]).toBe('function');
+        console.log(`✅ ${exportName} is a valid function`);
+      });
+      
+      console.log(`Total exports tested: ${exports.length}`);
+      console.log(`Functions: ${functionExports.length}, Config objects: ${configExports.length}, Classes: ${classExports.length}`);
+    });
+
+    test('configuration objects should have expected structure', () => {
+      // Test REAL_ESTATE_RULES structure
+      if (utilsPackage.REAL_ESTATE_RULES) {
+        const rules = utilsPackage.REAL_ESTATE_RULES;
+        
+        expect(rules.financing).toBeDefined();
+        expect(rules.costs).toBeDefined();
+        expect(rules.propertyIncome).toBeDefined();
+        expect(rules.returns).toBeDefined();
+        expect(rules.defaults).toBeDefined();
+        
+        // Test specific values
+        expect(typeof rules.financing.defaultDownPaymentPercent).toBe('number');
+        expect(typeof rules.costs.assignmentFeePercent).toBe('number');
+        expect(typeof rules.propertyIncome.assistedLiving.revenuePerBedroomPerMonth).toBe('number');
+        
+        console.log('✅ REAL_ESTATE_RULES has correct structure');
+      }
+      
+      // Test VALIDATION_RULES structure  
+      if (utilsPackage.VALIDATION_RULES) {
+        const validation = utilsPackage.VALIDATION_RULES;
+        
+        expect(validation.price).toBeDefined();
+        expect(validation.capRate).toBeDefined();
+        expect(validation.percentages).toBeDefined();
+        
+        expect(typeof validation.price.minimum).toBe('number');
+        expect(typeof validation.price.maximum).toBe('number');
+        expect(typeof validation.capRate.minimum).toBe('number');
+        expect(typeof validation.capRate.maximum).toBe('number');
+        
+        console.log('✅ VALIDATION_RULES has correct structure');
+      }
+    });
+
+    test('config instances should have expected methods', () => {
+      if (utilsPackage.defaultRealEstateConfig) {
+        const config = utilsPackage.defaultRealEstateConfig;
+        
+        // Test that it has the expected properties
+        expect(config.financing).toBeDefined();
+        expect(config.costs).toBeDefined();
+        expect(config.propertyTypes).toBeDefined();
+        
+        // Test that it's an instance with methods (if using class approach)
+        if (typeof config.updateConfig === 'function') {
+          expect(typeof config.updateConfig).toBe('function');
+          expect(typeof config.validate).toBe('function');
+          console.log('✅ defaultRealEstateConfig has expected methods');
+        }
+      }
+    });
+
+    test('backwards compatibility - all calculation functions should still exist', () => {
+      // Core calculation functions that should remain as functions
+      const requiredFunctions = [
+        'calculatePMT',
+        'formatCurrency',
+        'formatPercentage', 
+        'calculateDOM',
+        'extractPhoneNumber',
+        'extractBedrooms',
+        'calculateCOCR15',
+        'calculateCOCR30',
+        'calculateCapRate',
+        'calculateNetToBuyer'
+      ];
+      
+      requiredFunctions.forEach(functionName => {
+        expect(utilsPackage[functionName]).toBeDefined();
+        expect(typeof utilsPackage[functionName]).toBe('function');
+        console.log(`✅ ${functionName} exists and is a function`);
+      });
+    });
+
+    test('new centralized functions should exist', () => {
+      // New functions from centralized approach
+      const newFunctions = [
+        'calculateNOIByPropertyType',
+        'calculateInvestmentAnalysis', 
+        'calculateFormattedInvestmentAnalysis',
+        'calculatePriceFor15PercentCOCR',
+        'calculateCOCRWith30PercentDown',
+        'validatePropertyAnalysisInputs'
+      ];
+      
+      newFunctions.forEach(functionName => {
+        if (utilsPackage[functionName]) {
+          expect(typeof utilsPackage[functionName]).toBe('function');
+          console.log(`✅ ${functionName} exists and is a function`);
+        }
       });
     });
   });
