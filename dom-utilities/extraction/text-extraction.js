@@ -15,13 +15,28 @@ function extractPhoneNumber(text = null) {
   }
   
   // Check for tel: links first (only in browser environment)
+  // Check for formatted phone numbers in DOM elements first (only in browser environment)
   if (typeof document !== 'undefined') {
-    const telLinks = document.querySelectorAll('a[href^="tel:"]');
-    if (telLinks.length > 0) {
-      const telHref = telLinks[0].getAttribute("href");
-      const phoneFromTel = telHref.replace("tel:", "").replace(/\D/g, "");
-      if (phoneFromTel.length >= 10) {
-        return phoneFromTel;
+    // Try specific selectors for phone numbers in order of preference
+    const phoneSelectors = [
+      'span.phone-number',           // <span class="phone-number">(510) 680-2437</span>
+      'a.number[href^="tel:"]',      // <a class="number" href="tel:...">(510) 680-2437</a>
+      '#broker-phone-number',        // ID-based selector
+      '.broker-phone .number',       // Class-based selector in broker section
+      'a[href^="tel:"]'             // Any tel link
+    ];
+    
+    for (const selector of phoneSelectors) {
+      const phoneElement = document.querySelector(selector);
+      if (phoneElement) {
+        const phoneText = phoneElement.textContent?.trim();
+        // Skip button text and empty strings
+        if (phoneText && phoneText !== 'Call' && phoneText.length > 5) {
+          // Verify it looks like a phone number before returning
+          if (/\(\d{3}\)\s*\d{3}[-.\s]?\d{4}/.test(phoneText) || /\d{3}[-.\s]?\d{3}[-.\s]?\d{4}/.test(phoneText)) {
+            return phoneText;
+          }
+        }
       }
     }
   }
