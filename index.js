@@ -1,60 +1,62 @@
 /**
  * Main entry point for @archerjessop/utilities-etc
+ * Centrally managed business logic and utilities
  */
 
-// Business utilities
-import { calculateCompoundGrowth, calculateNPV, calculatePresentValue } from "./calculations/business/projections.js";
-import { calculateCurrentRatio, calculateROE, calculateROI } from "./calculations/business/ratios.js";
+// ========================================
+// CONFIGURATION (Centralized Business Rules)
+// ========================================
+export { REAL_ESTATE_RULES, VALIDATION_RULES } from "./config/real-estate-rules.js";
 
-// Core calculation utilities
-import { formatCurrency, formatNumber, formatPercentage, formatPriceValue } from "./calculations/core/formatting.js";
-import { calculateInterestOverTime, calculatePMT, calculateRemainingBalance } from "./calculations/core/loan-calculations.js";
-
-// Date utilities
-import { calculateDOM, calculateTimeDifference } from "./calculations/date/calculations.js";
-
-// Real estate utilities
-import { calculateAppreciation } from "./calculations/real-estate/appreciation.js";
-import { calculateCapRate, calculateCashFlow, calculateCashFlowYield } from "./calculations/real-estate/cash-flow.js";
-import { calculateNetToBuyer } from "./calculations/real-estate/costs.js";
-import { calculateCOCR, calculateCOCR15, calculateCOCR30, calculateCOCRScenario } from "./calculations/real-estate/returns.js";
-
-// DOM utilities
-import { extractBedrooms, extractEmail, extractPhoneNumber, extractPrice } from "./dom-utilities/extraction/text-extraction.js";
-import { validateDate, validateEmail, validatePhoneNumber } from "./dom-utilities/validation/validators.js";
-
-// Export everything
+// ========================================
+// CENTRALIZED REAL ESTATE CALCULATIONS
+// ========================================
 export {
-  calculateAppreciation,
-  calculateRemainingBalance as calculateBalloonBalance, // Alias for common usage
-  calculateCapRate,
-  calculateCashFlow,
-  calculateCashFlowYield,
-  calculateCOCR,
-  calculateCOCR15,
-  calculateCOCR30,
-  calculateCOCRScenario,
-  calculateCompoundGrowth,
-  calculateCurrentRatio,
-  calculateDOM,
-  calculateInterestOverTime,
-  calculateNetToBuyer,
-  calculateNPV,
-  calculatePMT,
-  calculatePresentValue,
-  calculateRemainingBalance,
-  calculateROE,
-  calculateROI,
-  calculateTimeDifference,
-  extractBedrooms,
-  extractEmail,
-  extractPhoneNumber,
-  extractPrice,
-  formatCurrency,
-  formatNumber,
-  formatPercentage,
-  formatPriceValue,
-  validateDate,
-  validateEmail,
-  validatePhoneNumber
-};
+  calculateNOIByPropertyType,
+  calculateInvestmentAnalysis,
+  calculateFormattedInvestmentAnalysis,
+  calculatePriceForTargetCOCR,
+  calculatePriceFor15PercentCOCR,
+  calculateCOCRWith30PercentDown,
+  extractBedroomsWithDefault,
+  validatePropertyAnalysisInputs
+} from "./calculations/real-estate/investment-analysis.js";
+
+// ========================================
+// CORE CALCULATION UTILITIES
+// ========================================
+export { formatCurrency, formatNumber, formatPercentage, formatPriceValue } from "./calculations/core/formatting.js";
+export { calculateInterestOverTime, calculatePMT, calculateRemainingBalance } from "./calculations/core/loan-calculations.js";
+export { calculateRemainingBalance as calculateBalloonBalance } from "./calculations/core/loan-calculations.js";
+
+
+
+// ========================================
+// DATE UTILITIES
+// ========================================
+export { calculateDOM, calculateTimeDifference } from "./calculations/date/calculations.js";
+
+// ========================================
+// EXISTING REAL ESTATE UTILITIES (for backwards compatibility)
+// ========================================
+export { calculateAppreciation } from "./calculations/real-estate/appreciation.js";
+export { calculateCapRate, calculateCashFlow, calculateCashFlowYield } from "./calculations/real-estate/cash-flow.js";
+export { calculateNetToBuyer } from "./calculations/real-estate/costs.js";
+export { calculateCOCR, calculateCOCR15, calculateCOCR30, calculateCOCRScenario } from "./calculations/real-estate/returns.js";
+
+// ========================================
+// BUSINESS UTILITIES
+// ========================================
+export { calculateCompoundGrowth, calculateNPV, calculatePresentValue } from "./calculations/business/projections.js";
+export { calculateCurrentRatio, calculateROE, calculateROI } from "./calculations/business/ratios.js";
+
+// ========================================
+// DOM UTILITIES
+// ========================================
+export { extractBedrooms, extractEmail, extractPhoneNumber, extractPrice } from "./dom-utilities/extraction/text-extraction.js";
+export { validateDate, validateEmail, validatePhoneNumber } from "./dom-utilities/validation/validators.js";
+
+// ========================================
+// VERSION INFO
+// ========================================
+export const VERSION = "3.0.0"; // Bump to 2.0.0 for centralized business rules
