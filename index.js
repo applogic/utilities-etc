@@ -55,8 +55,3 @@ export { calculateCurrentRatio, calculateROE, calculateROI } from "./calculation
 // ========================================
 export { extractBedrooms, extractEmail, extractPhoneNumber, extractPrice } from "./dom-utilities/extraction/text-extraction.js";
 export { validateDate, validateEmail, validatePhoneNumber } from "./dom-utilities/validation/validators.js";
-
-// ========================================
-// VERSION INFO
-// ========================================
-export const VERSION = "3.0.0"; // Bump to 2.0.0 for centralized business rules

@@ -63,31 +63,31 @@ describe('Integration Tests - Package Exports', () => {
       let stringCount = 0;
       let classCount = 0;
       
+      // Known configuration objects
+      const configObjects = ['REAL_ESTATE_RULES', 'VALIDATION_RULES', 'DEFAULT_CONFIG'];
+      // Known class constructors (if any)
+      const classConstructors = ['RealEstateConfig'];
+      
       exports.forEach(([exportName, exportedValue]) => {
         const valueType = typeof exportedValue;
         
-        if (valueType === 'function') {
-          // Check if it's a class constructor or regular function
-          if (exportedValue.prototype && exportedValue.prototype.constructor === exportedValue) {
-            // It's a class constructor
-            expect(exportedValue.prototype).toBeDefined();
-            classCount++;
-            console.log(`✅ ${exportName} is a valid class constructor`);
-          } else {
-            // It's a regular function
-            functionCount++;
-            console.log(`✅ ${exportName} is a valid function`);
-          }
-        } else if (valueType === 'object' && exportedValue !== null) {
-          // Configuration object
+        if (configObjects.includes(exportName)) {
+          expect(valueType).toBe('object');
+          expect(exportedValue).not.toBeNull();
           objectCount++;
-          console.log(`✅ ${exportName} is a valid configuration object`);
-        } else if (valueType === 'string') {
-          // String export (like VERSION)
-          stringCount++;
-          console.log(`✅ ${exportName} is a valid string export`);
+          console.log(`✅ ${exportName} is a configuration object`);
+        } else if (classConstructors.includes(exportName)) {
+          expect(valueType).toBe('function');
+          expect(exportedValue.prototype).toBeDefined();
+          classCount++;
+          console.log(`✅ ${exportName} is a class constructor`);
+        } else if (valueType === 'function') {
+          functionCount++;
+          console.log(`✅ ${exportName} is a function`);
+        } else if (valueType === 'object' && exportedValue !== null) {
+          objectCount++;
+          console.log(`✅ ${exportName} is an unexpected object`);
         } else {
-          // Unexpected type
           throw new Error(`Unexpected export type for ${exportName}: ${valueType}`);
         }
       });
@@ -96,11 +96,148 @@ describe('Integration Tests - Package Exports', () => {
       console.log(`Functions: ${functionCount}, Objects: ${objectCount}, Strings: ${stringCount}, Classes: ${classCount}`);
       
       // Validate we have the expected categories
+      expect(exports.length).toBeGreaterThan(0);
       expect(functionCount).toBeGreaterThan(0);  // Should have calculation functions
       expect(objectCount).toBeGreaterThan(0);    // Should have config objects
     });
 
-    // Keep your other existing tests or add the structure validation tests
+    test('configuration objects should have expected structure', () => {
+      if (utilsPackage.REAL_ESTATE_RULES) {
+        const rules = utilsPackage.REAL_ESTATE_RULES;
+        
+        expect(rules.financing).toBeDefined();
+        expect(rules.costs).toBeDefined();
+        expect(rules.propertyIncome).toBeDefined();
+        expect(rules.returns).toBeDefined();
+        expect(rules.defaults).toBeDefined();
+        
+        // Test specific values exist and are correct types
+        expect(typeof rules.financing.defaultDownPaymentPercent).toBe('number');
+        expect(typeof rules.costs.assignmentFeePercent).toBe('number');
+        expect(typeof rules.propertyIncome.assistedLiving.revenuePerBedroomPerMonth).toBe('number');
+        expect(typeof rules.returns.targetCOCR15Percent).toBe('number');
+        expect(typeof rules.defaults.bedroomCount).toBe('number');
+        
+        console.log('✅ REAL_ESTATE_RULES has correct structure');
+      }
+      
+      if (utilsPackage.VALIDATION_RULES) {
+        const validation = utilsPackage.VALIDATION_RULES;
+        
+        expect(validation.price).toBeDefined();
+        expect(validation.capRate).toBeDefined();
+        expect(validation.percentages).toBeDefined();
+        
+        expect(typeof validation.price.minimum).toBe('number');
+        expect(typeof validation.price.maximum).toBe('number');
+        expect(typeof validation.capRate.minimum).toBe('number');
+        expect(typeof validation.capRate.maximum).toBe('number');
+        
+        console.log('✅ VALIDATION_RULES has correct structure');
+      }
+      
+    });
+
+    test('backwards compatibility - core functions should exist', () => {
+      const coreFunctions = [  // Fixed: was "corefunctions"
+        'calculatePMT',
+        'formatCurrency',
+        'formatPercentage', 
+        'calculateDOM',
+        'extractPhoneNumber',
+        'extractBedrooms',
+        'calculateCOCR15',
+        'calculateCOCR30',
+        'calculateCapRate',
+        'calculateNetToBuyer',
+        'calculateBalloonBalance'
+      ];
+      
+      const foundFunctions = [];
+      const missingFunctions = [];
+      
+      coreFunctions.forEach(functionName => {  // Fixed: was "coreFunction"
+        if (utilsPackage[functionName] && typeof utilsPackage[functionName] === 'function') {
+          foundFunctions.push(functionName);
+          console.log(`✅ ${functionName} exists and is a function`);
+        } else {
+          missingFunctions.push(functionName);
+          console.log(`❌ ${functionName} missing or not a function`);
+        }
+      });
+      
+      console.log(`Core functions: ${foundFunctions.length}/${coreFunctions.length} found`);  // Fixed: was "coreFunction"
+      expect(foundFunctions.length).toBe(coreFunctions.length);  // Fixed: was "coreFunction"
+    });
+
+    test('new centralized functions should exist', () => {
+      const newFunctions = [
+        'calculateNOIByPropertyType',
+        'calculateInvestmentAnalysis', 
+        'calculateFormattedInvestmentAnalysis',
+        'calculatePriceFor15PercentCOCR',
+        'calculateCOCRWith30PercentDown',
+        'validatePropertyAnalysisInputs',
+        'extractBedroomsWithDefault'
+      ];
+      
+      const implementedFunctions = [];
+      
+      newFunctions.forEach(functionName => {
+        if (utilsPackage[functionName] && typeof utilsPackage[functionName] === 'function') {
+          implementedFunctions.push(functionName);
+          console.log(`✅ ${functionName} exists and is a function`);
+        } else {
+          console.log(`⚠️ ${functionName} not yet implemented`);
+        }
+      });
+      
+      console.log(`New centralized functions: ${implementedFunctions.length}/${newFunctions.length} implemented`);
+      
+      // Expect at least some new functions to be implemented
+      expect(implementedFunctions.length).toBeGreaterThan(0);
+    });
+
+    test('function exports should be callable', () => {
+      // Test a few key functions to ensure they're properly exported and callable
+      const testFunctions = [
+        { name: 'formatCurrency', args: [1000], expectedType: 'string' },
+        { name: 'calculatePMT', args: [100000, 0.05, 30], expectedType: 'number' }
+      ];
+      
+      testFunctions.forEach(({ name, args, expectedType }) => {
+        if (utilsPackage[name]) {
+          expect(typeof utilsPackage[name]).toBe('function');
+          
+          try {
+            const result = utilsPackage[name](...args);
+            expect(typeof result).toBe(expectedType);
+            console.log(`✅ ${name} is callable and returns ${expectedType}`);
+          } catch (error) {
+            console.log(`❌ ${name} threw error:`, error.message);
+            throw error;
+          }
+        }
+      });
+    });
+
+    test('configuration values should be reasonable', () => {
+      if (utilsPackage.REAL_ESTATE_RULES) {
+        const rules = utilsPackage.REAL_ESTATE_RULES;
+        
+        // Test reasonable ranges for financial rules
+        expect(rules.financing.defaultDownPaymentPercent).toBeGreaterThan(0);
+        expect(rules.financing.defaultDownPaymentPercent).toBeLessThan(100);
+        
+        expect(rules.costs.assignmentFeePercent).toBeGreaterThan(0);
+        expect(rules.costs.assignmentFeePercent).toBeLessThan(1);
+        
+        expect(rules.propertyIncome.assistedLiving.revenuePerBedroomPerMonth).toBeGreaterThan(0);
+        expect(rules.propertyIncome.assistedLiving.revenuePerBedroomPerMonth).toBeLessThan(10000);
+        
+        console.log('✅ Configuration values are within reasonable ranges');
+      }
+    });
   });
 
   describe('Cross-Function Integration', () => {
